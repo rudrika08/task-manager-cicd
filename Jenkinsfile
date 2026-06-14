@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_NAME     = 'task-manager'
-        DOCKER_USER  = 'yourdockerhubusername'
+        DOCKER_USER  = 'rudrika83'
         DOCKER_IMAGE = "${DOCKER_USER}/${APP_NAME}"
     }
 
