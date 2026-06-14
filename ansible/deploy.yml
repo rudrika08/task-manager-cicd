@@ -3,7 +3,7 @@
   hosts: prod
   become: yes
   vars:
-    image: "yourdockerhubusername/task-manager:{{ image_tag }}"
+    image: "rudrika83/task-manager:{{ image_tag }}"
 
   tasks:
     - name: Pull latest Docker image
