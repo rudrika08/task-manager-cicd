@@ -17,7 +17,7 @@
 | 6 | Write pipeline files | ✅ Done | — |
 | 7 | Wire Jenkins to GitHub | ⬜ Pending (Manual) | 30 min |
 | 8 | Run and verify | ⬜ Pending | 30 min |
-| 9 | Resume & GitHub polish | ⬜ Pending | 30 min |
+| 9 | Resume & GitHub polish | ✅ Done | 30 min |
 
 ---
 

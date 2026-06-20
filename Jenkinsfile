@@ -88,6 +88,11 @@ pipeline {
         success {
             echo "✅ Successfully deployed ${APP_NAME}:${BUILD_NUMBER} to production"
             
+            // 📧 Email Notification
+            mail to: 'rudrika.812@gmail.com',
+                 subject: " Build Successful: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                 body: "The pipeline deployed successfully. View it here: ${env.BUILD_URL}"
+            
             // 🔔 Slack Notification (Requires Slack Notification Plugin)
             // slackSend channel: '#alerts',
             //           color: 'good',
