@@ -15,8 +15,6 @@ git push → GitHub webhook → Jenkins → Maven build & test
 
 Every stage is automated. A single `git push` triggers the entire chain, including build verification, containerisation, and a health-check-gated deployment.
 
-![Jenkins Pipeline Success](jenkins-success.png)
-
 ## Architecture
 
 | Component | Role |
