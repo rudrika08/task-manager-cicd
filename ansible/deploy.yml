@@ -25,7 +25,7 @@
 
     - name: Verify deployment
       uri:
-        url: http://localhost:8080/health
+        url: http://localhost:8080/actuator/health
         status_code: 200
       register: health_check
       until: health_check.status == 200

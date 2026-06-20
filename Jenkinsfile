@@ -4,6 +4,7 @@ pipeline {
     options {
         skipDefaultCheckout(true)
         disableConcurrentBuilds()
+        timeout(time: 30, unit: 'MINUTES')
     }
 
     environment {
@@ -49,7 +50,14 @@ pipeline {
                         docker build -t "${DOCKER_IMAGE}:${BUILD_NUMBER}" .
                         printf '%s\n' "$DPASS" | docker login -u "$DUSER" --password-stdin
                         docker push "${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                        docker tag "${DOCKER_IMAGE}:${BUILD_NUMBER}" "${DOCKER_IMAGE}:latest"
+                        docker push "${DOCKER_IMAGE}:latest"
                     '''
+                }
+            }
+            post {
+                always {
+                    sh 'docker logout || true'
                 }
             }
         }
@@ -65,10 +73,13 @@ pipeline {
 
     post {
         failure {
-            echo 'Build failed - check logs'
+            echo "❌ Pipeline FAILED for ${APP_NAME}:${BUILD_NUMBER} — check stage logs above"
         }
         success {
-            echo "Deployed ${APP_NAME}:${BUILD_NUMBER}"
+            echo "✅ Successfully deployed ${APP_NAME}:${BUILD_NUMBER} to production"
+        }
+        aborted {
+            echo "⚠️ Pipeline aborted for ${APP_NAME}:${BUILD_NUMBER}"
         }
     }
 }
