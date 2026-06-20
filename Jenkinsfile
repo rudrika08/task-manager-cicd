@@ -74,9 +74,24 @@ pipeline {
     post {
         failure {
             echo "❌ Pipeline FAILED for ${APP_NAME}:${BUILD_NUMBER} — check stage logs above"
+            
+            // 📧 Email Notification
+            mail to: 'rudrika.812@gmail.com',
+                 subject: " Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                 body: "The pipeline failed. Please check the logs here: ${env.BUILD_URL}"
+
+            // 🔔 Slack Notification (Requires Slack Notification Plugin)
+            // slackSend channel: '#alerts',
+            //           color: 'danger',
+            //           message: "❌ Pipeline FAILED: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\nView Logs: ${env.BUILD_URL}"
         }
         success {
             echo "✅ Successfully deployed ${APP_NAME}:${BUILD_NUMBER} to production"
+            
+            // 🔔 Slack Notification (Requires Slack Notification Plugin)
+            // slackSend channel: '#alerts',
+            //           color: 'good',
+            //           message: "✅ Successfully deployed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\nView: ${env.BUILD_URL}"
         }
         aborted {
             echo "⚠️ Pipeline aborted for ${APP_NAME}:${BUILD_NUMBER}"
