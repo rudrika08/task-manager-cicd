@@ -3,7 +3,7 @@
   hosts: prod
   become: yes
   vars:
-    image: "rudrika83/task-manager:{{ image_tag }}"
+    image: "{{ docker_user }}/task-manager:{{ image_tag }}"
 
   tasks:
     - name: Pull latest Docker image
@@ -20,11 +20,14 @@
     - name: Run new container
       command: >
         docker run -d --name task-manager
+        --restart unless-stopped
         -p 8080:8080 {{ image }}
 
     - name: Verify deployment
       uri:
         url: http://localhost:8080/health
         status_code: 200
-      retries: 5
+      register: health_check
+      until: health_check.status == 200
+      retries: 12
       delay: 5

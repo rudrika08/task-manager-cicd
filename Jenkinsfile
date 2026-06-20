@@ -1,10 +1,16 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+        disableConcurrentBuilds()
+    }
+
     environment {
         APP_NAME     = 'task-manager'
         DOCKER_USER  = 'rudrika83'
         DOCKER_IMAGE = "${DOCKER_USER}/${APP_NAME}"
+        ANSIBLE_HOST_KEY_CHECKING = 'False'
     }
 
     stages {
@@ -17,13 +23,13 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'chmod +x mvnw'
-                sh './mvnw clean package -DskipTests -Dorg.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL=86400'
+                sh './mvnw -B clean package -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
-                sh './mvnw test'
+                sh './mvnw -B test'
             }
             post {
                 always {
@@ -40,9 +46,9 @@ pipeline {
                     passwordVariable: 'DPASS'
                 )]) {
                     sh '''
-                        docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
-                        echo $DPASS | docker login -u $DUSER --password-stdin
-                        docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                        docker build -t "${DOCKER_IMAGE}:${BUILD_NUMBER}" .
+                        printf '%s\n' "$DPASS" | docker login -u "$DUSER" --password-stdin
+                        docker push "${DOCKER_IMAGE}:${BUILD_NUMBER}"
                     '''
                 }
             }
@@ -50,14 +56,16 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh "ansible-playbook ansible/deploy.yml -i ansible/inventory -e image_tag=${BUILD_NUMBER}"
+                sshagent(credentials: ['prod-server-ssh']) {
+                    sh 'ansible-playbook ansible/deploy.yml -i ansible/inventory -e "image_tag=${BUILD_NUMBER}" -e "docker_user=${DOCKER_USER}"'
+                }
             }
         }
     }
 
     post {
         failure {
-            echo 'Build failed — check logs'
+            echo 'Build failed - check logs'
         }
         success {
             echo "Deployed ${APP_NAME}:${BUILD_NUMBER}"

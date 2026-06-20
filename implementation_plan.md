@@ -58,13 +58,13 @@ docker run -p 8080:8080 task-manager:1.0
 
 ### Step 9: Push to Docker Hub
 ```bash
-docker tag task-manager:1.0 yourusername/task-manager:1.0
+docker tag task-manager:1.0 rudrika83/task-manager:1.0
 docker login
-docker push yourusername/task-manager:1.0
+docker push rudrika83/task-manager:1.0
 ```
 
 > [!IMPORTANT]
-> Replace `yourusername` with your actual Docker Hub username in the Jenkinsfile and Ansible playbook before pushing.
+> The current pipeline uses Docker Hub username `rudrika83`. Replace it in the Jenkinsfile if you want to push to a different account.
 
 ---
 
@@ -113,7 +113,7 @@ sudo systemctl start docker && sudo systemctl enable docker
 | Prod server SSH | SSH Private Key | `prod-server-ssh` |
 
 ### Step 15: Install plugins
-- Git, Maven Integration, Pipeline, Docker Pipeline, Ansible
+- Git, Maven Integration, Pipeline, Docker Pipeline, Ansible, SSH Agent, Credentials Binding
 
 ### Step 16: Configure Maven
 - Manage Jenkins → Tools → Maven → Add Maven → Name: `Maven3` → Auto-install
@@ -191,7 +191,7 @@ graph LR
 ## Open Questions
 
 > [!IMPORTANT]
-> **Docker Hub username**: You need to provide your Docker Hub username so I can set it in the `Jenkinsfile` and `ansible/deploy.yml`. For now, I'll use a placeholder `yourdockerhubusername`.
+> **Docker Hub username**: The current pipeline uses `rudrika83` in the `Jenkinsfile` and passes it into `ansible/deploy.yml`. Change `DOCKER_USER` in the `Jenkinsfile` if you want to publish under a different Docker Hub account.
 
 > [!IMPORTANT]
-> **Azure VM IPs**: Once you create the VMs in Phase 4, you'll need to update `ansible/inventory` with the prod-server's public IP address.
+> **Azure VM IPs**: `ansible/inventory` currently points to `20.204.40.129` as `azureuser`. Update that host if your prod-server public IP changes.
